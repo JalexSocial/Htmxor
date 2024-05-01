@@ -7,16 +7,16 @@ namespace Htmxor.Http;
 /// <summary>
 /// A builder class for constructing a swap style command string for HTMX responses.
 /// </summary>
-public sealed class SwapStyleBuilder 
+public sealed class SwapStyleBuilder
 {
-    private readonly SwapStyle? style;
-    private readonly OrderedDictionary modifiers = new();
+    private readonly SwapStyle style;
+    private readonly OrderedDictionary modifiers = new(StringComparer.Ordinal);
 
     /// <summary>
     /// Initializes a new instance of the SwapStyleBuilder with a specified swap style.
     /// </summary>
     /// <param name="style">The initial swap style to be applied.</param>
-    public SwapStyleBuilder(SwapStyle? style = null)
+    public SwapStyleBuilder(SwapStyle style = SwapStyle.Default)
     {
         this.style = style;
     }
@@ -32,6 +32,7 @@ public sealed class SwapStyleBuilder
     /// </remarks>
     /// <param name="time">The amount of time htmx should wait after receiving a 
     /// response to swap the content.</param>
+    /// <returns>This <see cref="SwapStyleBuilder"/> object instance.</returns>
     public SwapStyleBuilder AfterSwapDelay(TimeSpan time)
     {
         AddModifier("swap", time.TotalMilliseconds < 1000 ? $"{time.TotalMilliseconds}ms" : $"{time.TotalSeconds}s");
@@ -50,11 +51,12 @@ public sealed class SwapStyleBuilder
     /// </remarks>
     /// <param name="time">The amount of time htmx should wait after receiving a 
     /// response to swap the content.</param>
+    /// <returns>This <see cref="SwapStyleBuilder"/> object instance.</returns>
     public SwapStyleBuilder AfterSettleDelay(TimeSpan time)
     {
-	    AddModifier("settle", time.TotalMilliseconds < 1000 ? $"{time.TotalMilliseconds}ms" : $"{time.TotalSeconds}s");
+        AddModifier("settle", time.TotalMilliseconds < 1000 ? $"{time.TotalMilliseconds}ms" : $"{time.TotalSeconds}s");
 
-	    return this;
+        return this;
     }
 
     /// <summary>
@@ -67,7 +69,7 @@ public sealed class SwapStyleBuilder
     /// </remarks>
     /// <param name="direction">The scroll direction after the swap.</param>
     /// <param name="selector">Optional CSS selector of the target element.</param>
-    /// <returns>The SwapStyleBuilder instance for chaining.</returns>
+    /// <returns>This <see cref="SwapStyleBuilder"/> object instance.</returns>
     public SwapStyleBuilder Scroll(ScrollDirection direction, string? selector = null)
     {
         switch (direction)
@@ -92,7 +94,7 @@ public sealed class SwapStyleBuilder
     /// is present then the page is scrolled to the top of the content identified by the css selector.
     /// </remarks>
     /// <param name="selector">Optional CSS selector of the target element.</param>
-    /// <returns>The SwapStyleBuilder instance for chaining.</returns>
+    /// <returns>This <see cref="SwapStyleBuilder"/> object instance.</returns>
     public SwapStyleBuilder ScrollTop(string? selector = null) => Scroll(ScrollDirection.Top, selector);
 
     /// <summary>
@@ -104,7 +106,7 @@ public sealed class SwapStyleBuilder
     /// is present then the page is scrolled to the bottom of the content identified by the css selector.
     /// </remarks>
     /// <param name="selector">Optional CSS selector of the target element.</param>
-    /// <returns>The SwapStyleBuilder instance for chaining.</returns>
+    /// <returns>This <see cref="SwapStyleBuilder"/> object instance.</returns>
     public SwapStyleBuilder ScrollBottom(string? selector = null) => Scroll(ScrollDirection.Bottom, selector);
     
     /// <summary>
@@ -117,7 +119,7 @@ public sealed class SwapStyleBuilder
     /// This keeps the current title unchanged regardless of the incoming swap content's title tag.
     /// </remarks>
     /// <param name="ignore">Whether to ignore the title.</param>
-    /// <returns>The SwapStyleBuilder instance for chaining.</returns>
+    /// <returns>This <see cref="SwapStyleBuilder"/> object instance.</returns>
     public SwapStyleBuilder IgnoreTitle(bool ignore = true)
     {
         AddModifier("ignoreTitle", ignore);
@@ -132,7 +134,7 @@ public sealed class SwapStyleBuilder
     /// This method ensures the title of the document is updated according to the swap response by removing any
     /// ignoreTitle modifiers, effectively setting <c>ignoreTitle:false</c>.
     /// </remarks>
-    /// <returns>The SwapStyleBuilder instance for chaining.</returns>
+    /// <returns>This <see cref="SwapStyleBuilder"/> object instance.</returns>
     public SwapStyleBuilder IncludeTitle() => IgnoreTitle(false);
 
     /// <summary>
@@ -143,7 +145,7 @@ public sealed class SwapStyleBuilder
     /// will add the modifier <c>transition:true</c> to enable smooth transitions.
     /// </remarks>
     /// <param name="show">Whether to show transition effects.</param>
-    /// <returns>The SwapStyleBuilder instance for chaining.</returns>
+    /// <returns>This <see cref="SwapStyleBuilder"/> object instance.</returns>
     public SwapStyleBuilder Transition(bool show)
     {
         AddModifier("transition", show);
@@ -157,7 +159,7 @@ public sealed class SwapStyleBuilder
     /// <remarks>
     /// By calling this method, transition effects are enabled for the swap, adding the modifier <c>transition:true</c>.
     /// </remarks>
-    /// <returns>The SwapStyleBuilder instance for chaining.</returns>
+    /// <returns>This <see cref="SwapStyleBuilder"/> object instance.</returns>
     public SwapStyleBuilder IncludeTransition() => Transition(true);
 
     /// <summary>
@@ -166,7 +168,7 @@ public sealed class SwapStyleBuilder
     /// <remarks>
     /// This method disables transition effects by adding the modifier <c>transition:false</c> to the swap commands.
     /// </remarks>
-    /// <returns>The SwapStyleBuilder instance for chaining.</returns>
+    /// <returns>This <see cref="SwapStyleBuilder"/> object instance.</returns>
     public SwapStyleBuilder IgnoreTransition() => Transition(false);
 
     /// <summary>
@@ -180,7 +182,7 @@ public sealed class SwapStyleBuilder
     /// will be <c>focus-scroll:false</c>
     /// </remarks>
     /// <param name="scroll">Whether to scroll to the focus element.</param>
-    /// <returns>The SwapStyleBuilder instance for chaining.</returns>
+    /// <returns>This <see cref="SwapStyleBuilder"/> object instance.</returns>
     public SwapStyleBuilder ScrollFocus(bool scroll = true)
     {
         AddModifier("focus-scroll", scroll);
@@ -195,7 +197,7 @@ public sealed class SwapStyleBuilder
     /// <remarks>
     /// Adds a modifier of <c>focus-scroll:false</c>
     /// </remarks>
-    /// <returns>The SwapStyleBuilder instance for chaining.</returns>
+    /// <returns>This <see cref="SwapStyleBuilder"/> object instance.</returns>
     public SwapStyleBuilder PreserveFocus() => ScrollFocus(false);
 
     /// <summary>
@@ -209,7 +211,7 @@ public sealed class SwapStyleBuilder
     /// </remarks>
     /// <param name="direction">The scroll direction after swap.</param>
     /// <param name="selector">Optional CSS selector of the target element.</param>
-    /// <returns>The SwapStyleBuilder instance for chaining.</returns>
+    /// <returns>This <see cref="SwapStyleBuilder"/> object instance.</returns>
     public SwapStyleBuilder ShowOn(ScrollDirection direction, string? selector = null)
     {
         switch (direction)
@@ -233,7 +235,7 @@ public sealed class SwapStyleBuilder
     /// <paramref name="selector"/>.
     /// </remarks>
     /// <param name="selector">Optional CSS selector of the target element.</param>
-    /// <returns>The SwapStyleBuilder instance for chaining.</returns>
+    /// <returns>This <see cref="SwapStyleBuilder"/> object instance.</returns>
     public SwapStyleBuilder ShowOnTop(string? selector = null) => ShowOn(ScrollDirection.Top, selector);
 
     /// <summary>
@@ -244,18 +246,18 @@ public sealed class SwapStyleBuilder
     /// <paramref name="selector"/>.
     /// </remarks>
     /// <param name="selector">Optional CSS selector of the target element.</param>
-    /// <returns>The SwapStyleBuilder instance for chaining.</returns>
+    /// <returns>This <see cref="SwapStyleBuilder"/> object instance.</returns>
     public SwapStyleBuilder ShowOnBottom(string? selector = null) => ShowOn(ScrollDirection.Bottom, selector);
 
     /// <summary>
     /// Specifies that the swap should show in the window by smoothly scrolling to either the top or bottom of the window.
     /// </summary>
-    /// <param name="direction">The direction to scroll the window after the swap.</param>
     /// <remarks>
     /// This method adds the modifier <c>show:window:<paramref name="direction"/></c>, directing the swap to display the specified
     /// element at the bottom of the window.
     /// </remarks>
-    /// <returns>The SwapStyleBuilder instance for chaining.</returns>
+    /// <param name="direction">The direction to scroll the window after the swap.</param>
+    /// <returns>This <see cref="SwapStyleBuilder"/> object instance.</returns>
     public SwapStyleBuilder ShowWindow(ScrollDirection direction)
     {
         switch (direction)
@@ -280,7 +282,7 @@ public sealed class SwapStyleBuilder
     /// for ensuring that important content or notifications at the top of the page are immediately visible to
     /// the user after a swap operation.
     /// </remarks>
-    /// <returns>The SwapStyleBuilder instance for chaining.</returns>
+    /// <returns>This <see cref="SwapStyleBuilder"/> object instance.</returns>
     public SwapStyleBuilder ShowWindowTop() => ShowWindow(ScrollDirection.Top);
 
     /// <summary>
@@ -291,7 +293,7 @@ public sealed class SwapStyleBuilder
     /// at the bottom of the window following a swap by smoothly animating the scrollbar position. This positioning
     /// can be used for infinite scrolling, footers, or information appended at the end of the page.
     /// </remarks>
-    /// <returns>The SwapStyleBuilder instance for chaining.</returns>
+    /// <returns>This <see cref="SwapStyleBuilder"/> object instance.</returns>
     public SwapStyleBuilder ShowWindowBottom() => ShowWindow(ScrollDirection.Bottom);
 
     /// <summary>
@@ -301,7 +303,7 @@ public sealed class SwapStyleBuilder
     /// This method disables automatic scrolling by setting the modifier <c>show:none</c>, ensuring the page
     /// position remains unchanged after the swap.
     /// </remarks>
-    /// <returns>The SwapStyleBuilder instance for chaining.</returns>
+    /// <returns>This <see cref="SwapStyleBuilder"/> object instance.</returns>
     public SwapStyleBuilder ShowNone()
     {
         AddModifier("show", "none");
@@ -312,14 +314,15 @@ public sealed class SwapStyleBuilder
     /// <summary>
     /// Builds the swap style command string with all specified modifiers.
     /// </summary>
-    /// <returns>A tuple containing the SwapStyle and the constructed command string.</returns>
-    internal (SwapStyle?, string) Build()
+    /// <returns>A tuple containing the <see cref="SwapStyle"/> and the constructed command string.</returns>
+    internal (SwapStyle, string) Build()
     {
         var value = string.Empty;
 
         if (modifiers.Count > 0)
         {
-            value = modifiers.Cast<DictionaryEntry>()
+            value = modifiers
+                .Cast<DictionaryEntry>()
                 .Select(entry => $"{entry.Key}:{entry.Value}")
                 .Aggregate((current, next) => $"{current} {next}");
         }
@@ -336,7 +339,7 @@ public sealed class SwapStyleBuilder
     {
         if (modifiers.Contains(modifier))
             modifiers.Remove(modifier);
-        
+
         modifiers.Add(modifier, options);
     }
 
@@ -365,6 +368,7 @@ public static class SwapStyleBuilderExtension
     /// <param name="style">The swap style.</param>
     /// <param name="time">The amount of time htmx should wait after receiving a 
     /// response to swap the content.</param>
+    /// <returns>A <see cref="SwapStyleBuilder"/> object instance.</returns>
     public static SwapStyleBuilder AfterSwapDelay(this SwapStyle style, TimeSpan time) => new SwapStyleBuilder(style).AfterSwapDelay(time);
 
     /// <summary>
@@ -379,6 +383,7 @@ public static class SwapStyleBuilderExtension
     /// <param name="style">The swap style.</param>
     /// <param name="time">The amount of time htmx should wait after receiving a 
     /// response to swap the content.</param>
+    /// <returns>A <see cref="SwapStyleBuilder"/> object instance.</returns>
     public static SwapStyleBuilder AfterSettleDelay(this SwapStyle style, TimeSpan time) => new SwapStyleBuilder(style).AfterSettleDelay(time);
 
     /// <summary>
@@ -392,7 +397,7 @@ public static class SwapStyleBuilderExtension
     /// <param name="style">The swap style.</param>
     /// <param name="direction">The scroll direction after the swap.</param>
     /// <param name="selector">Optional CSS selector of the target element.</param>
-    /// <returns>The SwapStyleBuilder instance for chaining.</returns>
+    /// <returns>A <see cref="SwapStyleBuilder"/> object instance.</returns>
     public static SwapStyleBuilder Scroll(this SwapStyle style, ScrollDirection direction, string? selector) => new SwapStyleBuilder(style).Scroll(direction, selector);
 
     /// <summary>
@@ -405,7 +410,7 @@ public static class SwapStyleBuilderExtension
     /// </remarks>
     /// <param name="selector">Optional CSS selector of the target element.</param>
     /// <param name="style">The swap style.</param>
-    /// <returns>The SwapStyleBuilder instance for chaining.</returns>
+    /// <returns>A <see cref="SwapStyleBuilder"/> object instance.</returns>
     public static SwapStyleBuilder ScrollTop(this SwapStyle style, string? selector) => new SwapStyleBuilder(style).ScrollTop(selector);
 
     /// <summary>
@@ -418,7 +423,7 @@ public static class SwapStyleBuilderExtension
     /// </remarks>
     /// <param name="selector">Optional CSS selector of the target element.</param>
     /// <param name="style">The swap style.</param>
-    /// <returns>The SwapStyleBuilder instance for chaining.</returns>
+    /// <returns>A <see cref="SwapStyleBuilder"/> object instance.</returns>
     public static SwapStyleBuilder ScrollBottom(this SwapStyle style, string? selector) => new SwapStyleBuilder(style).ScrollBottom(selector);
 
     /// <summary>
@@ -432,7 +437,7 @@ public static class SwapStyleBuilderExtension
     /// </remarks>
     /// <param name="style">The swap style.</param>
     /// <param name="ignore">Whether to ignore the title.</param>
-    /// <returns>The SwapStyleBuilder instance for chaining.</returns>
+    /// <returns>A <see cref="SwapStyleBuilder"/> object instance.</returns>
     public static SwapStyleBuilder IgnoreTitle(this SwapStyle style, bool ignore = true) => new SwapStyleBuilder(style).IgnoreTitle(ignore);
 
     /// <summary>
@@ -443,7 +448,7 @@ public static class SwapStyleBuilderExtension
     /// ignoreTitle modifiers, effectively setting <c>ignoreTitle:false</c>.
     /// </remarks>
     /// <param name="style">The swap style.</param>
-    /// <returns>The SwapStyleBuilder instance for chaining.</returns>
+    /// <returns>A <see cref="SwapStyleBuilder"/> object instance.</returns>
     public static SwapStyleBuilder IncludeTitle(this SwapStyle style) => new SwapStyleBuilder(style).IncludeTitle();
 
     /// <summary>
@@ -455,7 +460,7 @@ public static class SwapStyleBuilderExtension
     /// </remarks>
     /// <param name="style">The swap style.</param>
     /// <param name="show">Whether to show transition effects.</param>
-    /// <returns>The SwapStyleBuilder instance for chaining.</returns>
+    /// <returns>A <see cref="SwapStyleBuilder"/> object instance.</returns>
     public static SwapStyleBuilder Transition(this SwapStyle style, bool show) => new SwapStyleBuilder(style).Transition(show);
 
     /// <summary>
@@ -465,7 +470,7 @@ public static class SwapStyleBuilderExtension
     /// By calling this method, transition effects are enabled for the swap, adding the modifier <c>transition:true</c>.
     /// </remarks>
     /// <param name="style">The swap style.</param>
-    /// <returns>The SwapStyleBuilder instance for chaining.</returns>
+    /// <returns>A <see cref="SwapStyleBuilder"/> object instance.</returns>
     public static SwapStyleBuilder IncludeTransition(this SwapStyle style) => new SwapStyleBuilder(style).IncludeTransition();
 
     /// <summary>
@@ -475,7 +480,7 @@ public static class SwapStyleBuilderExtension
     /// This method disables transition effects by adding the modifier <c>transition:false</c> to the swap commands.
     /// </remarks>
     /// <param name="style">The swap style.</param>
-    /// <returns>The SwapStyleBuilder instance for chaining.</returns>
+    /// <returns>A <see cref="SwapStyleBuilder"/> object instance.</returns>
     public static SwapStyleBuilder IgnoreTransition(this SwapStyle style) => new SwapStyleBuilder(style).IgnoreTransition();
 
     /// <summary>
@@ -490,7 +495,7 @@ public static class SwapStyleBuilderExtension
     /// </remarks>
     /// <param name="style">The swap style.</param>
     /// <param name="scroll">Whether to scroll to the focus element.</param>
-    /// <returns>The SwapStyleBuilder instance for chaining.</returns>
+    /// <returns>A <see cref="SwapStyleBuilder"/> object instance.</returns>
     public static SwapStyleBuilder ScrollFocus(this SwapStyle style, bool scroll = true) => new SwapStyleBuilder(style).ScrollFocus(scroll);
 
     /// <summary>
@@ -502,7 +507,7 @@ public static class SwapStyleBuilderExtension
     /// </remarks>
     /// <param name="style">The swap style.</param>
     /// <param name="scroll">Whether to scroll to current focus or preserve focus</param>
-    /// <returns>The SwapStyleBuilder instance for chaining.</returns>
+    /// <returns>A <see cref="SwapStyleBuilder"/> object instance.</returns>
     public static SwapStyleBuilder PreserveFocus(this SwapStyle style, bool scroll = true) => new SwapStyleBuilder(style).PreserveFocus();
 
     /// <summary>
@@ -516,7 +521,7 @@ public static class SwapStyleBuilderExtension
     /// <param name="style">The swap style.</param>
     /// <param name="selector">Optional CSS selector of the target element.</param>
     /// <param name="direction">The scroll direction after swap.</param>
-    /// <returns>The SwapStyleBuilder instance for chaining.</returns>
+    /// <returns>A <see cref="SwapStyleBuilder"/> object instance.</returns>
     public static SwapStyleBuilder ShowOn(this SwapStyle style, ScrollDirection direction, string? selector = null) => new SwapStyleBuilder(style).ShowOn(direction, selector);
 
     /// <summary>
@@ -527,7 +532,7 @@ public static class SwapStyleBuilderExtension
     /// </remarks>
     /// <param name="style">The swap style.</param>
     /// <param name="selector">Optional CSS selector of the target element.</param>
-    /// <returns>The SwapStyleBuilder instance for chaining.</returns>
+    /// <returns>A <see cref="SwapStyleBuilder"/> object instance.</returns>
     public static SwapStyleBuilder ShowOnTop(this SwapStyle style, string? selector = null) => new SwapStyleBuilder(style).ShowOnTop(selector);
 
     /// <summary>
@@ -538,7 +543,7 @@ public static class SwapStyleBuilderExtension
     /// </remarks>
     /// <param name="style">The swap style.</param>
     /// <param name="selector">The CSS selector of the target element.</param>
-    /// <returns>The SwapStyleBuilder instance for chaining.</returns>
+    /// <returns>A <see cref="SwapStyleBuilder"/> object instance.</returns>
     public static SwapStyleBuilder ShowOnBottom(this SwapStyle style, string? selector = null) => new SwapStyleBuilder(style).ShowOnBottom(selector);
 
     /// <summary>
@@ -550,7 +555,7 @@ public static class SwapStyleBuilderExtension
     /// element at the bottom of the window.
     /// </remarks>
     /// <param name="style">The swap style.</param>
-    /// <returns>The SwapStyleBuilder instance for chaining.</returns>
+    /// <returns>A <see cref="SwapStyleBuilder"/> object instance.</returns>
     public static SwapStyleBuilder ShowWindow(this SwapStyle style, ScrollDirection direction) => new SwapStyleBuilder(style).ShowWindow(direction);
 
     /// <summary>
@@ -563,7 +568,7 @@ public static class SwapStyleBuilderExtension
     /// the user after a swap operation.
     /// </remarks>
     /// <param name="style">The swap style.</param>
-    /// <returns>The SwapStyleBuilder instance for chaining.</returns>
+    /// <returns>A <see cref="SwapStyleBuilder"/> object instance.</returns>
     public static SwapStyleBuilder ShowWindowTop(this SwapStyle style) => new SwapStyleBuilder(style).ShowWindowTop();
 
     /// <summary>
@@ -575,7 +580,7 @@ public static class SwapStyleBuilderExtension
     /// can be used for infinite scrolling, footers, or information appended at the end of the page.
     /// </remarks>
     /// <param name="style">The swap style.</param>
-    /// <returns>The SwapStyleBuilder instance for chaining.</returns>
+    /// <returns>A <see cref="SwapStyleBuilder"/> object instance.</returns>
     public static SwapStyleBuilder ShowWindowBottom(this SwapStyle style) => new SwapStyleBuilder(style).ShowWindowBottom();
 
     /// <summary>
@@ -586,6 +591,6 @@ public static class SwapStyleBuilderExtension
     /// position remains unchanged after the swap.
     /// </remarks>
     /// <param name="style">The swap style.</param>
-    /// <returns>The SwapStyleBuilder instance for chaining.</returns>
+    /// <returns>A <see cref="SwapStyleBuilder"/> object instance.</returns>
     public static SwapStyleBuilder ShowNone(this SwapStyle style) => new SwapStyleBuilder(style).ShowNone();
 }
